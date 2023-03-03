@@ -24,9 +24,7 @@ router.get('/patients', function(req, res, next) {
 });
 
 router.get('/patients/:id', function(req, res, next) {
-    const Patient = mongoose.model('Patient', { name: String ,id: String, order: String});
-        Patient.find({Id: req.params.id}, function (err, patients) {
-            if (err) return console.error(err);
+        Patient.findOne({Id: req.params.id}).then( function (patients) {
             console.log(patients);
             res.send(patients);
         })
@@ -79,5 +77,20 @@ router.put('/orders/:id', jsonParser, function(req, res, next) {
         }
     );
 } );
+
+router.put('/patients/:id', jsonParser, function(req, res, next) {
+    Patient.findOne({Id: req.params.id}).then(
+        function (patients) {
+            console.log(patients);
+            res.send(patients);
+            Patient.updateOne({Id: req.params.id},{OrderId: [...patients.OrderId,req.body.orderId]}).then(
+                function (err, patients) {
+                    if (err) return console.error(err);
+                    console.log(patients);
+                    res.send(patients);
+                }
+            );
+        })
+});
 
 module.exports = router;
