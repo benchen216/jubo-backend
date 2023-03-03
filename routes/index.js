@@ -8,7 +8,7 @@ const jsonParser = bodyParser.json()
 const mongoose = require('mongoose');
 mongoose.connect('mongodb://127.0.0.1:27017/test');
 const Patient = mongoose.model('Patient', { Name: String ,Id: String, OrderId: Array});
-const Order = mongoose.model('Order', {Id: { type: Number, unique: true, min: 1 },Message: String});
+const Order = mongoose.model('Order', {Message: String});
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
@@ -46,7 +46,7 @@ router.get('/orders', function(req, res, next) {
 } );
 
 router.get('/orders/:id', function(req, res, next) {
-    Order.find({Id: req.params.id}).then(function (orders) {
+    Order.find({_id: req.params.id}).then(function (orders) {
         res.send(orders);
     } );
 } );
@@ -61,7 +61,6 @@ router.post('/orders', jsonParser, function(req, res, next) {
 
 
 router.delete('/orders/:id', function(req, res, next) {
-    const Order = mongoose.model('Order', { message: String ,id: String});
 
     Order.remove({Id: req.params.id}, function (err, orders) {
         if (err) return console.error(err);
@@ -79,11 +78,6 @@ router.put('/orders/:id', jsonParser, function(req, res, next) {
             res.send(orders);
         }
     );
-   /* Order.update({Id: req.params.id}, {Message: req.body.message}, function (err, orders) {
-        if (err) return console.error(err);
-        console.log(orders);
-        res.send(orders);
-    })*/
 } );
 
 module.exports = router;
